@@ -14,7 +14,6 @@ namespace HealthchecksToolbelt
             services.Configure<HealthCheckPublisherOptions>(options =>
             {
                 options.Delay = TimeSpan.FromSeconds(10);
-                //options.Predicate = (check) => check.Tags.Contains("ready");
             });
 
             services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
