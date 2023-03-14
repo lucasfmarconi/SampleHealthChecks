@@ -1,26 +1,23 @@
-﻿using System;
-using Serilog;
-using Serilog.Formatting.Json;
+﻿using Serilog;
 using Serilog.Sinks.Elasticsearch;
-using Serilog.Sinks.File;
+using System;
 
-namespace HealthchecksToolbelt.Utils
+namespace HealthchecksToolbelt.Utils;
+
+public class SerilogUtil
 {
-    public class SerilogUtil
+    public SerilogUtil()
     {
-        public SerilogUtil()
-        {
-        }
+    }
 
-        public ILogger CreateLogger()
+    public ILogger CreateLogger()
+    {
+        return new LoggerConfiguration().WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
         {
-            return new LoggerConfiguration().WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
-            {
-                FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
-                EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
-                                       EmitEventFailureHandling.WriteToFailureSink |
-                                       EmitEventFailureHandling.RaiseCallback
-            }).CreateLogger();
-        }
+            FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
+            EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                               EmitEventFailureHandling.WriteToFailureSink |
+                               EmitEventFailureHandling.RaiseCallback
+        }).CreateLogger();
     }
 }

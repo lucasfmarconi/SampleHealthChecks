@@ -1,31 +1,22 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using HealthChecks;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace HealthchecksToolbelt
+namespace HealthchecksToolbelt;
+
+public static class RestApiHealthChecksConfiguration
 {
-    public class RestAPIHealthChecksConfiguration
+
+    public static void ConfigureRestApiHealthCheck(this IServiceCollection services)
     {
-        public IConfiguration Configuration { get; }
+        const string urlsConfig = "http://localhost:8080/,http://localhost:8081/";
+        var uris = urlsConfig.Split(',');
 
-        public RestAPIHealthChecksConfiguration(IConfiguration configuration)
+        foreach (var uri in uris)
         {
-            Configuration = configuration;
-        }
-
-        public void Configure(IServiceCollection services)
-        {
-            var urlsConfig = "http://localhost:8080/,http://localhost:8081/";
-            string[] uris = urlsConfig?.Split(',');
-            //string[] uris = 
-            for (int i = 0; i < uris?.Length; i++)
-            {
-                services.AddHealthChecks().AddTypeActivatedCheck<HealthChecks.RestAPICheck>(
-                    $"restapi_healthcheck_{uris[i]}",
-                    failureStatus: HealthStatus.Unhealthy,
-                    tags: new[] { "RestAPICheck" }, new object[] { uris[i] });
-            }
+            services.AddHealthChecks().AddTypeActivatedCheck<HealthChecks.RestAPICheck>(
+                $"restapi_healthcheck_{uri}",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: new[] { "RestAPICheck" }, new object[] { uri });
         }
     }
 }

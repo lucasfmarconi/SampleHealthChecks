@@ -6,30 +6,29 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace HealthchecksToolbelt.HealthChecks
+namespace HealthchecksToolbelt.HealthChecks;
+
+public class RestAPICheck : IHealthCheck
 {
-    public class RestAPICheck : IHealthCheck
+
+    private string _uriToCheck { get; }
+
+    public RestAPICheck(string uriToCheck)
     {
+        _uriToCheck = uriToCheck;
+    }
 
-        private string _uriToCheck { get; }
+    public async Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        var healthCheckResultHealthy = await new Utils.RestClientUtil()
+            .ProcessRestApiCallAsync(HttpMethod.Get, _uriToCheck);
 
-        public RestAPICheck(string uriToCheck)
+        if (healthCheckResultHealthy.StatusCode.Equals(HttpStatusCode.OK))
         {
-            _uriToCheck = uriToCheck;
+            return HealthCheckResult.Healthy("Healthy");
         }
 
-        public async Task<HealthCheckResult> CheckHealthAsync(
-            HealthCheckContext context, CancellationToken cancellationToken = default)
-        {
-            var healthCheckResultHealthy = await new Utils.RestClientUtil()
-                .ProcessRestApiCallAsync(HttpMethod.Get, _uriToCheck);
-
-            if (healthCheckResultHealthy.StatusCode.Equals(HttpStatusCode.OK))
-            {
-                return HealthCheckResult.Healthy("Healthy");
-            }
-
-            return HealthCheckResult.Unhealthy("Unhealthy");
-        }
+        return HealthCheckResult.Unhealthy("Unhealthy");
     }
 }

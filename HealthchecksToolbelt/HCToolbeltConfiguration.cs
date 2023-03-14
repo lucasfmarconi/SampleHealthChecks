@@ -3,20 +3,17 @@ using HealthchecksToolbelt.Publisher;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace HealthchecksToolbelt
+namespace HealthchecksToolbelt;
+
+public static class HcToolbeltConfiguration
 {
-    public class HCToolbeltConfiguration
+    public static void ConfigureHealthCheckLogReadinessPublisher(this IServiceCollection services)
     {
-        public HCToolbeltConfiguration() { }
-
-        public void Configure(IServiceCollection services)
+        services.Configure<HealthCheckPublisherOptions>(options =>
         {
-            services.Configure<HealthCheckPublisherOptions>(options =>
-            {
-                options.Delay = TimeSpan.FromSeconds(10);
-            });
+            options.Delay = TimeSpan.FromSeconds(10);
+        });
 
-            services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
-        }
+        services.AddSingleton<IHealthCheckPublisher, ReadinessPublisher>();
     }
 }
