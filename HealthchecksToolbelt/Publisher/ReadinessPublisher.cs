@@ -23,13 +23,13 @@ public class ReadinessPublisher : IHealthCheckPublisher
     {
         if (report.Status == HealthStatus.Healthy)
         {
-            _serilog.Information("{Timestamp} Readiness Probe Status: {@Result}",
-                DateTime.UtcNow, report.Status);
+            _serilog.Information("{Timestamp} Readiness Probe Status: {Result}",
+                DateTime.UtcNow, report.Status.ToString());
         }
         else
         {
-            _serilog.Error("{Timestamp} Readiness Probe Status: {@Result}",
-                DateTime.UtcNow, report.Status);
+            _serilog.Error("{Timestamp} Readiness Probe Status: {Result}",
+                DateTime.UtcNow, report.Status.ToString());
 
             ReportEntriesAsError(report);
         }
@@ -44,8 +44,8 @@ public class ReadinessPublisher : IHealthCheckPublisher
         report.Entries.Where(e => e.Value.Status.Equals(HealthStatus.Unhealthy))
             .ToList().ForEach(e =>
             {
-                _serilog.Error("{HCkey} Exception: {@Exception}",
-                    e.Key, e.Value.Exception);
+                _serilog.Error("{HCkey} Exception: {Exception}",
+                    e.Key, e.Value.Exception.Message);
             });
     }
 }

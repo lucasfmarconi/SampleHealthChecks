@@ -8,7 +8,7 @@ public static class RestApiHealthChecksConfiguration
 
     public static void ConfigureRestApiHealthCheck(this IServiceCollection services)
     {
-        const string urlsConfig = "http://localhost:8080/,http://localhost:8081/";
+        const string urlsConfig = "https://httpbin.org/get";
         var uris = urlsConfig.Split(',');
 
         foreach (var uri in uris)
